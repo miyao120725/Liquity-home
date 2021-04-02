@@ -3,6 +3,22 @@ import { Web3ReactProvider } from "@web3-react/core";
 import { Flex, Spinner, Heading, ThemeProvider, Container } from "theme-ui";
 import { Wallet } from "@ethersproject/wallet";
 
+import {
+  BrowserRouter,
+  Redirect,
+  // HashRouter,
+  Route,
+  Switch,
+} from 'react-router-dom'
+
+import {
+  makeStyles,
+  createStyles,
+  Theme,
+  Grid,
+  // ThemeProvider
+} from '@material-ui/core'
+
 import { BatchedWebSocketAugmentedWeb3Provider } from "@liquity/providers";
 import { Decimal, Difference, Trove } from "@liquity/lib-base";
 import { LiquityStoreProvider } from "@liquity/lib-react";
@@ -19,6 +35,15 @@ import theme from "./theme";
 
 import { DisposableWalletProvider } from "./testUtils/DisposableWalletProvider";
 import { PageSwitcher } from "./pages/PageSwitcher";
+
+import IndexHome from './pages/new-ui/IndexHome'
+import FrontendRegistration from './pages/new-ui/FrontendRegistration'
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    
+  })
+)
 
 if (window.ethereum) {
   // Silence MetaMask warning in console
@@ -53,8 +78,9 @@ type LiquityFrontendProps = {
   loader?: React.ReactNode;
 };
 
-const LiquityFrontend: React.FC<LiquityFrontendProps> = ({ loader }) => {
+const LiquityFrontend: React.FC<LiquityFrontendProps> = ({ loader,children }) => {
   const { account, provider, liquity } = useLiquity();
+  const classes = useStyles()
 
   // For console tinkering ;-)
   Object.assign(window, {
@@ -69,29 +95,7 @@ const LiquityFrontend: React.FC<LiquityFrontendProps> = ({ loader }) => {
 
   return (
     <LiquityStoreProvider {...{ loader }} store={liquity.store}>
-      <Flex sx={{ flexDirection: "column", minHeight: "100%" }}>
-        <Header>
-          <UserAccount />
-          <SystemStatsPopup />
-        </Header>
-
-        <Container
-          variant="main"
-          sx={{
-            display: "flex",
-            flexGrow: 1,
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center"
-          }}
-        >
-          <PageSwitcher />
-        </Container>
-
-        <Footer>* Please note that the final user-facing application will look different.</Footer>
-      </Flex>
-
-      <TransactionMonitor />
+      {children}
     </LiquityStoreProvider>
   );
 };
@@ -127,7 +131,27 @@ const App = () => {
         <WalletConnector {...{ loader }}>
           <LiquityProvider {...{ loader, unsupportedNetworkFallback }}>
             <TransactionProvider>
-              <LiquityFrontend {...{ loader }} />
+              {/* <LiquityFrontend {...{ loader }} /> */}
+              <BrowserRouter>
+                <Switch>
+                  <LiquityFrontend {...{ loader }}>
+                    <Route
+                      render={() => (
+                        <>
+                          <Route path="/" exact component={IndexHome} />
+                          <Route path="/registration" component={FrontendRegistration} />
+                          {/* <Route path="/borrowing" component={Borrowing} />
+                          <Route path="/liquidation" component={Liquidation} />
+                          <Route path="/pledge" component={Pledge} />
+                          <Route path="/stablePool" component={StablePool} />
+                          //  */}
+                        </>
+                      )}
+                    />
+                  </LiquityFrontend>
+                  {/* <Redirect from="*" to='/'/> */}
+                </Switch>
+              </BrowserRouter>
             </TransactionProvider>
           </LiquityProvider>
         </WalletConnector>

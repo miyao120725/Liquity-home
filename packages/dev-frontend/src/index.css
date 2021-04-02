@@ -1,5 +1,12 @@
 /* Can't style the html tag with theme-ui, so put styles in here */
 
-html {
+html,body {
   height: 100%;
+  background-position: 0px -30vh;
+    background-repeat: no-repeat;
+    background-image: radial-gradient(50% 50% at 50% 50%, rgba(255, 0, 122, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+}
+
+.MuiButton-root{
+  text-transform: none!important;
 }

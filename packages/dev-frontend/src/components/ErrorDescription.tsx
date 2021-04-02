@@ -11,7 +11,6 @@ export const ErrorDescription: React.FC = ({ children }) => (
 
       mb: [2, 3],
       p: 3,
-
       border: 1,
       borderRadius: "8px",
       borderColor: "danger",
